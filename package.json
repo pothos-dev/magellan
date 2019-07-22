@@ -1,0 +1,23 @@
+{
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "rimraf dist && tsc"
+  },
+  "dependencies": {
+    "react-navigation": "^3.11.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.6",
+    "react-native": "^0.60.4"
+  },
+  "devDependencies": {
+    "@types/react": "^16.8.23",
+    "@types/react-native": "^0.60.2",
+    "react": "^16.8.6",
+    "react-native": "^0.60.4",
+    "typescript": "^3.5.3",
+    "rimraf": "^2.6.3"
+  }
+}
