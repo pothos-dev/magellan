@@ -5,7 +5,7 @@ export type ScreenName = string
 export type ScreenProps = Record<string, any>
 export type ScreenMap = Record<ScreenName, ScreenProps>
 export type ComponentMap<Screens extends ScreenMap> = {
-  [Name in Names<Screens>]: ComponentType<ScreenMap[Name]>
+  [Name in Names<Screens>]: ComponentType<Screens[Name]>
 }
 
 type Names<Screens extends ScreenMap> = keyof Screens & string
