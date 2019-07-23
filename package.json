@@ -1,20 +1,27 @@
 {
+  "name": "@bearbytes/magellan",
+  "version": "0.0.0",
+  "description": "TODO",
+  "keywords": [],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "prepare": "rimraf dist && tsc"
+    "prepare": "rimraf dist && tsc",
+    "patch": "npm version patch && npm publish --access public"
   },
+  "author": "pancomputationalist@mailbox.org",
+  "license": "ISC",
   "dependencies": {
     "react-navigation": "^3.11.1"
   },
   "peerDependencies": {
-    "react": "^16.8.6",
-    "react-native": "^0.60.4"
+    "react": "^16.8.6"
   },
   "devDependencies": {
     "@types/react": "^16.8.23",
-    "@types/react-native": "^0.60.2",
     "react": "^16.8.6",
     "react-native": "^0.60.4",
     "typescript": "^3.5.3",

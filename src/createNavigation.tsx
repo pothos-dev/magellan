@@ -8,12 +8,13 @@ import {
   NavigationScreenProp,
   StackNavigatorConfig,
 } from 'react-navigation'
-import { ScreenMap } from './types'
+import { ComponentMap, CreateNavigationResult, ScreenMap } from './types'
 
 export function createNavigation<Screens extends ScreenMap>(
   navigatorConfig?: StackNavigatorConfig
-) {
+): CreateNavigationResult<Screens> {
   let appContainerInstance: NavigationContainerComponent | null
+
   function dispatch(action: NavigationAction) {
     if (!appContainerInstance) {
       throw 'NavigationRoot is not initialized'
@@ -21,10 +22,9 @@ export function createNavigation<Screens extends ScreenMap>(
     appContainerInstance.dispatch(action)
   }
 
-  type Params = { [Screen in keyof Screens]: Screens[Screen] }
-  function navigate<Screen extends keyof Screens & string>(
-    screenName: Screen,
-    params: Params[Screen]
+  function navigate<Name extends keyof Screens & string>(
+    screenName: Name,
+    params: Screens[Name]
   ) {
     dispatch({
       type: 'Navigation/NAVIGATE',
@@ -39,10 +39,7 @@ export function createNavigation<Screens extends ScreenMap>(
     })
   }
 
-  type ComponentMap = {
-    [Screen in keyof Screens]: React.ComponentType<Params[Screen]>
-  }
-  function NavigationRoot(screenComponents: ComponentMap) {
+  function NavigationRoot(screenComponents: ComponentMap<Screens>) {
     const routes: NavigationRouteConfigMap = {}
     for (const key in screenComponents) {
       const Component = screenComponents[key]
@@ -57,5 +54,5 @@ export function createNavigation<Screens extends ScreenMap>(
     return <AppContainer ref={ref => (appContainerInstance = ref)} />
   }
 
-  return { navigate, navigateBack, NavigationRoot }
+  return { dispatch, navigate, navigateBack, NavigationRoot }
 }
