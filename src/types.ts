@@ -11,7 +11,7 @@ export type ComponentMap<Screens extends ScreenMap> = {
 type Names<Screens extends ScreenMap> = keyof Screens & string
 
 export interface CreateNavigationResult<Screens extends ScreenMap> {
-  dispatch(action: NavigationAction): void
+  dispatchNavigationAction(action: NavigationAction): void
 
   navigate<Name extends Names<Screens>>(
     screenName: Name,

@@ -15,7 +15,7 @@ export function createNavigation<Screens extends ScreenMap>(
 ): CreateNavigationResult<Screens> {
   let appContainerInstance: NavigationContainerComponent | null
 
-  function dispatch(action: NavigationAction) {
+  function dispatchNavigationAction(action: NavigationAction) {
     if (!appContainerInstance) {
       throw 'NavigationRoot is not initialized'
     }
@@ -26,7 +26,7 @@ export function createNavigation<Screens extends ScreenMap>(
     screenName: Name,
     params: Screens[Name]
   ) {
-    dispatch({
+    dispatchNavigationAction({
       type: 'Navigation/NAVIGATE',
       routeName: screenName,
       params,
@@ -34,7 +34,7 @@ export function createNavigation<Screens extends ScreenMap>(
   }
 
   function navigateBack() {
-    dispatch({
+    dispatchNavigationAction({
       type: 'Navigation/BACK',
     })
   }
@@ -54,5 +54,5 @@ export function createNavigation<Screens extends ScreenMap>(
     return <AppContainer ref={ref => (appContainerInstance = ref)} />
   }
 
-  return { dispatch, navigate, navigateBack, NavigationRoot }
+  return { dispatchNavigationAction, navigate, navigateBack, NavigationRoot }
 }
