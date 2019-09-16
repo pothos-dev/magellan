@@ -3,7 +3,7 @@
     "outDir": "dist",
     "declaration": true,
     "lib": ["dom", "esnext"],
-    "jsx": "react-native",
+    "jsx": "react",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
