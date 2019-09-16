@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "outDir": "dist",
     "declaration": true,
     "lib": ["dom", "esnext"],
-    "jsx": "react",
+    "jsx": "react-native",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,

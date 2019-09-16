@@ -10,10 +10,9 @@
     "react-navigation",
     "screens"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
   "files": [
-    "dist"
+    "src"
   ],
   "scripts": {
     "prepare": "rimraf dist && tsc",
@@ -32,7 +31,6 @@
   "devDependencies": {
     "@types/react": "^16.9.2",
     "react": "^16.9.0",
-    "react-native": "^0.60.5",
     "typescript": "^3.6.3",
     "rimraf": "^3.0.0"
   }
