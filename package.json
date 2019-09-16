@@ -1,6 +1,6 @@
 {
   "name": "@bearbytes/magellan",
-  "version": "2.0.1-0",
+  "version": "2.0.2-0",
   "description": "Simplified navigation for React Native with improved Typescript support, based on react-navigation",
   "keywords": [
     "typescript",
