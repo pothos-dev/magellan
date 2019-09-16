@@ -1,17 +1,19 @@
 import React from 'react'
 import {
   createAppContainer,
-  createStackNavigator,
   NavigationAction,
   NavigationContainerComponent,
   NavigationRouteConfigMap,
   NavigationScreenProp,
-  StackNavigatorConfig,
 } from 'react-navigation'
+import {
+  createStackNavigator,
+  NavigationStackConfig,
+} from 'react-navigation-stack'
 import { ComponentMap, CreateNavigationResult, ScreenMap } from './types'
 
 export function createNavigation<Screens extends ScreenMap>(
-  navigatorConfig?: StackNavigatorConfig
+  navigatorConfig?: NavigationStackConfig
 ): CreateNavigationResult<Screens> {
   let appContainerInstance: NavigationContainerComponent | null
 
@@ -40,7 +42,7 @@ export function createNavigation<Screens extends ScreenMap>(
   }
 
   function NavigationRoot(screenComponents: ComponentMap<Screens>) {
-    const routes: NavigationRouteConfigMap = {}
+    const routes: NavigationRouteConfigMap<any, any> = {}
     for (const key in screenComponents) {
       const Component = screenComponents[key]
       routes[key] = (props: { navigation: NavigationScreenProp<any, any> }) => (

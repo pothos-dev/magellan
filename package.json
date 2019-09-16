@@ -23,16 +23,17 @@
   "license": "ISC",
   "repository": "https://github.com/bearbytes/magellan",
   "dependencies": {
-    "react-navigation": "^3.11.1"
+    "react-navigation": "^4.0.5",
+    "react-navigation-stack": "^1.7.3"
   },
   "peerDependencies": {
-    "react": "^16.8.6"
+    "react": "^16.9.0"
   },
   "devDependencies": {
-    "@types/react": "^16.8.23",
-    "react": "^16.8.6",
-    "react-native": "^0.60.4",
-    "typescript": "^3.5.3",
-    "rimraf": "^2.6.3"
+    "@types/react": "^16.9.2",
+    "react": "^16.9.0",
+    "react-native": "^0.60.5",
+    "typescript": "^3.6.3",
+    "rimraf": "^3.0.0"
   }
 }
