@@ -1,14 +1,11 @@
-import { ComponentType } from 'react'
+import { ComponentType, ReactNode } from 'react'
 import { NavigationAction } from 'react-navigation'
+import { NavigationStackConfig } from 'react-navigation-stack'
 
-export type ScreenName = string
-export type ScreenProps = Record<string, any>
-export type ScreenMap = Record<ScreenName, ScreenProps>
-export type ComponentMap<Screens extends ScreenMap> = {
-  [Name in Names<Screens>]: ComponentType<Screens[Name]>
+export interface CreateNavigationOptions<Screens extends ScreenMap> {
+  container?: React.ComponentType<ContainerProps<Screens>>
+  stackConfig?: NavigationStackConfig
 }
-
-type Names<Screens extends ScreenMap> = keyof Screens & string
 
 export interface CreateNavigationResult<Screens extends ScreenMap> {
   dispatchNavigationAction(action: NavigationAction): void
@@ -21,4 +18,17 @@ export interface CreateNavigationResult<Screens extends ScreenMap> {
   navigateBack(): void
 
   NavigationRoot: ComponentType<ComponentMap<Screens>>
+}
+
+export type ScreenName = string
+export type ScreenProps = Record<string, any>
+export type ScreenMap = Record<ScreenName, ScreenProps>
+export type ComponentMap<Screens extends ScreenMap> = {
+  [Name in Names<Screens>]: ComponentType<Screens[Name]>
+}
+
+type Names<Screens extends ScreenMap> = keyof Screens & string
+
+interface ContainerProps<Screens extends ScreenMap> {
+  children: ReactNode
 }

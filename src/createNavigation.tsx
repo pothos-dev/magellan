@@ -6,14 +6,16 @@ import {
   NavigationRouteConfigMap,
   NavigationScreenProp,
 } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 import {
-  createStackNavigator,
-  NavigationStackConfig,
-} from 'react-navigation-stack'
-import { ComponentMap, CreateNavigationResult, ScreenMap } from './types'
+  ComponentMap,
+  CreateNavigationOptions,
+  CreateNavigationResult,
+  ScreenMap,
+} from './types'
 
 export function createNavigation<Screens extends ScreenMap>(
-  navigatorConfig?: NavigationStackConfig
+  options: CreateNavigationOptions<Screens>
 ): CreateNavigationResult<Screens> {
   let appContainerInstance: NavigationContainerComponent | null
 
@@ -42,15 +44,22 @@ export function createNavigation<Screens extends ScreenMap>(
   }
 
   function NavigationRoot(screenComponents: ComponentMap<Screens>) {
+    const C = options.container
+
     const routes: NavigationRouteConfigMap<any, any> = {}
     for (const key in screenComponents) {
       const Component = screenComponents[key]
-      routes[key] = (props: { navigation: NavigationScreenProp<any, any> }) => (
-        <Component {...props.navigation.state.params} />
-      )
+      routes[key] = (props: { navigation: NavigationScreenProp<any, any> }) => {
+        const screenElement = <Component {...props.navigation.state.params} />
+        if (C) {
+          return <C>{screenElement}</C>
+        } else {
+          return screenElement
+        }
+      }
     }
 
-    const rootNavigator = createStackNavigator(routes, navigatorConfig)
+    const rootNavigator = createStackNavigator(routes, options.stackConfig)
     const AppContainer = createAppContainer(rootNavigator)
 
     return <AppContainer ref={ref => (appContainerInstance = ref)} />
