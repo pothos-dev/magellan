@@ -1,68 +1,83 @@
+import { CommonActions, NavigationContainerRef } from '@react-navigation/core'
+import { NavigationNativeContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
-import {
-  createAppContainer,
-  NavigationAction,
-  NavigationContainerComponent,
-  NavigationRouteConfigMap,
-  NavigationScreenProp,
-} from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack'
 import {
   ComponentMap,
   CreateNavigationOptions,
   CreateNavigationResult,
+  MagellanAction,
   ScreenMap,
 } from './types'
+
+const Stack = createStackNavigator()
 
 export function createNavigation<Screens extends ScreenMap>(
   options: CreateNavigationOptions<Screens>
 ): CreateNavigationResult<Screens> {
-  let appContainerInstance: NavigationContainerComponent | null
+  // Global instance of the NavigationContainer to dispatch navigation actions to
+  let globalContainer: NavigationContainerRef | null
 
-  function dispatchNavigationAction(action: NavigationAction) {
-    if (!appContainerInstance) {
-      throw 'NavigationRoot is not initialized'
+  // This it the component that will render the current screen.
+  function NavigationRoot(screenComponents: ComponentMap<Screens>) {
+    const ScreenWrapper = options.container
+
+    const stackScreens = []
+    for (const screenName in screenComponents) {
+      let ScreenComponent = screenComponents[screenName]
+
+      if (ScreenWrapper) {
+        ScreenComponent = props => (
+          <ScreenWrapper>
+            <ScreenComponent {...props} />
+          </ScreenWrapper>
+        )
+      }
+
+      stackScreens.push(
+        <Stack.Screen
+          name={screenName}
+          component={({ navigation }) => (
+            <ScreenComponent {...navigation.state.params} />
+          )}
+        />
+      )
     }
-    appContainerInstance.dispatch(action)
+
+    const StackNavigator = (
+      <Stack.Navigator
+        headerMode={'none'}
+        screenOptions={options.stackNavigationOptions}
+      >
+        {stackScreens}
+      </Stack.Navigator>
+    )
+
+    return (
+      <NavigationNativeContainer ref={ref => (globalContainer = ref)}>
+        {StackNavigator}
+      </NavigationNativeContainer>
+    )
+  }
+
+  function dispatchNavigationAction(action: MagellanAction) {
+    if (!globalContainer) {
+      throw 'NavigationRoot is not mounted'
+    }
+    globalContainer.dispatch(action)
   }
 
   function navigate<Name extends keyof Screens & string>(
     screenName: Name,
     params: Screens[Name]
   ) {
-    dispatchNavigationAction({
-      type: 'Navigation/NAVIGATE',
-      routeName: screenName,
-      params,
-    })
+    dispatchNavigationAction(
+      CommonActions.navigate({ name: screenName, params })
+    )
   }
 
   function navigateBack() {
-    dispatchNavigationAction({
-      type: 'Navigation/BACK',
-    })
-  }
-
-  function NavigationRoot(screenComponents: ComponentMap<Screens>) {
-    const C = options.container
-
-    const routes: NavigationRouteConfigMap<any, any> = {}
-    for (const key in screenComponents) {
-      const Component = screenComponents[key]
-      routes[key] = (props: { navigation: NavigationScreenProp<any, any> }) => {
-        const screenElement = <Component {...props.navigation.state.params} />
-        if (C) {
-          return <C>{screenElement}</C>
-        } else {
-          return screenElement
-        }
-      }
-    }
-
-    const rootNavigator = createStackNavigator(routes, options.stackConfig)
-    const AppContainer = createAppContainer(rootNavigator)
-
-    return <AppContainer ref={ref => (appContainerInstance = ref)} />
+    dispatchNavigationAction(CommonActions.goBack())
   }
 
   return { dispatchNavigationAction, navigate, navigateBack, NavigationRoot }

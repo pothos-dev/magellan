@@ -1,24 +1,33 @@
+import { Action } from '@react-navigation/core/lib/typescript/CommonActions'
+import { StackActionType } from '@react-navigation/routers'
+import { StackNavigationOptions } from '@react-navigation/stack'
 import { ComponentType, ReactNode } from 'react'
-import { NavigationAction } from 'react-navigation'
-import { NavigationStackConfig } from 'react-navigation-stack'
 
+// Options passed to createNavigation().
 export interface CreateNavigationOptions<Screens extends ScreenMap> {
-  container?: React.ComponentType<ContainerProps<Screens>>
-  stackConfig?: NavigationStackConfig
+  container?: React.ComponentType<{ children: ReactNode }>
+  stackNavigationOptions?: StackNavigationOptions
 }
 
+// Result of createNavigation().
 export interface CreateNavigationResult<Screens extends ScreenMap> {
-  dispatchNavigationAction(action: NavigationAction): void
+  // This it the component that will render the current screen.
+  NavigationRoot: ComponentType<ComponentMap<Screens>>
 
+  // Navigate to any screen, passing the props to the screen component.
   navigate<Name extends Names<Screens>>(
     screenName: Name,
-    params: Screens[Name]
+    props: Screens[Name]
   ): void
 
+  // Navigate back to the last screen.
   navigateBack(): void
 
-  NavigationRoot: ComponentType<ComponentMap<Screens>>
+  // Dispatch an arbitrary navigation action to the react-navigation lib.
+  dispatchNavigationAction(action: MagellanAction): void
 }
+
+export type MagellanAction = Action | StackActionType
 
 export type ScreenName = string
 export type ScreenProps = Record<string, any>
@@ -28,7 +37,3 @@ export type ComponentMap<Screens extends ScreenMap> = {
 }
 
 type Names<Screens extends ScreenMap> = keyof Screens & string
-
-interface ContainerProps<Screens extends ScreenMap> {
-  children: ReactNode
-}
