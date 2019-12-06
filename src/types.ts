@@ -1,39 +1,50 @@
-import { Action } from '@react-navigation/core/lib/typescript/CommonActions'
-import { StackActionType } from '@react-navigation/routers'
-import { StackNavigationOptions } from '@react-navigation/stack'
-import { ComponentType, ReactNode } from 'react'
+import { Unionize } from 'utility-types'
 
-// Options passed to createNavigation().
-export interface CreateNavigationOptions<Screens extends ScreenMap> {
-  container?: React.ComponentType<{ children: ReactNode }>
-  stackNavigationOptions?: StackNavigationOptions
+// Helper Types
+type Dictionary<T = any> = Record<string, T>
+type ObjectToArray<T> = T[keyof T]
+
+// Base Types
+export type BaseScreens = Dictionary
+
+type SwitchContainer = { _navigator: 'switch' }
+type StackContainer = { _navigator: 'stack' }
+type ScreensContainer = SwitchContainer | StackContainer
+
+type ScreenNames<T extends BaseScreens> = Exclude<keyof T, '_navigator'>
+
+type ComponentMap<T extends BaseScreens> = {
+  [Name in ScreenNames<T>]: T[Name] extends ScreensContainer
+    ? ComponentMap<T[Name]>
+    : React.ComponentType<T[Name]>
 }
 
-// Result of createNavigation().
-export interface CreateNavigationResult<Screens extends ScreenMap> {
-  // This it the component that will render the current screen.
-  NavigationRoot: ComponentType<ComponentMap<Screens>>
-
-  // Navigate to any screen, passing the props to the screen component.
-  navigate<Name extends Names<Screens>>(
-    screenName: Name,
-    props: Screens[Name]
-  ): void
-
-  // Navigate back to the last screen.
-  navigateBack(): void
-
-  // Dispatch an arbitrary navigation action to the react-navigation lib.
-  dispatchNavigationAction(action: MagellanAction): void
+type Navigate<T extends BaseScreens> = {
+  [K in ScreenNames<T>]: T[K] extends ScreensContainer
+    ? Navigate<T[K]>
+    : (props: T[K]) => void
 }
 
-export type MagellanAction = Action | StackActionType
+export type MultiScreenRoute<T extends BaseScreens> = SingleScreenRoute<T>[]
+export type SingleScreenRoute<T extends BaseScreens> = Unionize<
+  {
+    [Name in ScreenNames<T>]: T[Name] extends ScreensContainer
+      ? Route<T[Name]>
+      : T[Name]
+  }
+>
 
-export type ScreenName = string
-export type ScreenProps = Record<string, any>
-export type ScreenMap = Record<ScreenName, ScreenProps>
-export type ComponentMap<Screens extends ScreenMap> = {
-  [Name in Names<Screens>]: ComponentType<Screens[Name]>
+export type Route<T extends BaseScreens> = T extends SwitchContainer
+  ? SingleScreenRoute<T>
+  : MultiScreenRoute<T>
+
+export interface ScreenContainerProps<T extends BaseScreens> {
+  screens: ComponentMap<T>
 }
 
-type Names<Screens extends ScreenMap> = keyof Screens & string
+export interface CreateScreensOptions<T extends BaseScreens> {}
+export interface CreateScreensResult<T extends BaseScreens> {
+  ScreenContainer: React.ComponentType<ScreenContainerProps<T>>
+  useNavigate(): Navigate<T>
+  navigate: Navigate<T>
+}

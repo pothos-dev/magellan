@@ -8,7 +8,7 @@ import {
   CreateNavigationResult,
   MagellanAction,
   ScreenMap,
-} from './types'
+} from './_types'
 
 const Stack = createStackNavigator()
 

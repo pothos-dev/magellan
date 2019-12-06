@@ -24,13 +24,14 @@
   "dependencies": {
     "@react-navigation/core": "next",
     "@react-navigation/native": "next",
-    "@react-navigation/stack": "next"
+    "@react-navigation/stack": "next",
+    "utility-types": "^3.10.0"
   },
   "peerDependencies": {
     "react": "^16.12.0"
   },
   "devDependencies": {
-    "@types/react": "^16.9.13",
+    "@types/react": "^16.9.14",
     "react": "^16.12.0",
     "typescript": "^3.7.2"
   }

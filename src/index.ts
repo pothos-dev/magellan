@@ -1,4 +1,4 @@
 import { createNavigation } from './createNavigation'
 
-export * from './types'
+export * from './_types'
 export { createNavigation }
