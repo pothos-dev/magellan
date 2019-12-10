@@ -1,3 +1,4 @@
+import { StackNavigationOptions } from '@react-navigation/stack'
 import { Unionize } from 'utility-types'
 
 // Helper Types
@@ -13,13 +14,17 @@ type ScreensContainer = SwitchContainer | StackContainer
 
 type ScreenNames<T extends BaseScreens> = Exclude<keyof T, '_navigator'>
 
-type ComponentMap<T extends BaseScreens> = {
+type NestedComponentMap<T extends BaseScreens> = {
   [Name in ScreenNames<T>]: T[Name] extends ScreensContainer
-    ? ComponentMap<T[Name]>
+    ? NestedComponentMap<T[Name]>
     : React.ComponentType<T[Name]>
 }
 
-type Navigate<T extends BaseScreens> = {
+type FlatComponentMap<T extends BaseScreens> = {
+  [Name in keyof T]: React.ComponentType<T[Name]>
+}
+
+export type Navigate<T extends BaseScreens> = {
   [K in ScreenNames<T>]: T[K] extends ScreensContainer
     ? Navigate<T[K]>
     : (props: T[K]) => void
@@ -39,11 +44,22 @@ export type Route<T extends BaseScreens> = T extends SwitchContainer
   : MultiScreenRoute<T>
 
 export interface ScreenContainerProps<T extends BaseScreens> {
-  screens: ComponentMap<T>
+  screens: FlatComponentMap<T>
 }
 
 export interface CreateScreensOptions<T extends BaseScreens> {}
 export interface CreateScreensResult<T extends BaseScreens> {
+  ScreenContainer: React.ComponentType<ScreenContainerProps<T>>
+  useNavigate(): Navigate<T>
+  navigate: Navigate<T>
+}
+
+export type CreateScreenStackOptions = {
+  stackOptions: StackNavigationOptions
+}
+export type CreateScreenStackResult<T extends BaseScreens> = {
+  stackOptions: StackNavigationOptions
+
   ScreenContainer: React.ComponentType<ScreenContainerProps<T>>
   useNavigate(): Navigate<T>
   navigate: Navigate<T>
