@@ -5,32 +5,32 @@ import {
 } from '@react-navigation/core'
 import { NavigationNativeContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { createElement, useRef } from 'react'
+import React, { createElement } from 'react'
 import {
   BaseScreens,
-  CreateScreenStackOptions,
-  CreateScreenStackResult,
   Navigate,
   ScreenContainerProps,
+  ScreenStack,
 } from './types'
 
 const Stack = createStackNavigator()
 
-export function createScreenStack<T extends BaseScreens>(
-  options: CreateScreenStackOptions
-): CreateScreenStackResult<T> {
-  const { stackOptions } = options
-
-  const containerRef = useRef<NavigationContainerRef>()
+export function createScreenStack<T extends BaseScreens>(): ScreenStack<T> {
+  let containerRef: NavigationContainerRef
 
   function ScreenContainer(props: ScreenContainerProps<T>) {
     const screenNames = Object.keys(props.screens)
 
     return (
-      <NavigationNativeContainer ref={containerRef}>
-        <Stack.Navigator screenOptions={stackOptions}>
+      <NavigationNativeContainer
+        ref={ref => {
+          containerRef = ref
+        }}
+      >
+        <Stack.Navigator {...props}>
           {screenNames.map(screenName => (
             <Stack.Screen
+              key={screenName}
               name={screenName}
               component={wrapComponent(props.screens[screenName])}
             />
@@ -54,12 +54,12 @@ export function createScreenStack<T extends BaseScreens>(
     }
   }
 
-  const navigate: Navigate<T> = new Proxy(null as any, {
+  const navigate = new Proxy({} as Navigate<T>, {
     get(target, propertyName) {
       if (typeof propertyName != 'string') return
       // TODO nesting
       return function(props: any) {
-        containerRef.current?.navigate(propertyName, props)
+        containerRef?.navigate(propertyName, props)
       }
     },
   })
@@ -69,5 +69,5 @@ export function createScreenStack<T extends BaseScreens>(
     return navigate
   }
 
-  return { ScreenContainer, navigate, useNavigate, stackOptions }
+  return { ScreenContainer, navigate, useNavigate }
 }

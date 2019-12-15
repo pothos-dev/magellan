@@ -1,4 +1,5 @@
 import { StackNavigationOptions } from '@react-navigation/stack'
+import { StackNavigationConfig } from '@react-navigation/stack/lib/typescript/stack/src/types'
 import { Unionize } from 'utility-types'
 
 // Helper Types
@@ -43,8 +44,11 @@ export type Route<T extends BaseScreens> = T extends SwitchContainer
   ? SingleScreenRoute<T>
   : MultiScreenRoute<T>
 
-export interface ScreenContainerProps<T extends BaseScreens> {
+export interface ScreenContainerProps<T extends BaseScreens>
+  extends StackNavigationConfig {
   screens: FlatComponentMap<T>
+  screenOptions?: StackNavigationOptions
+  initialRouteName?: keyof T & string
 }
 
 export interface CreateScreensOptions<T extends BaseScreens> {}
@@ -54,12 +58,7 @@ export interface CreateScreensResult<T extends BaseScreens> {
   navigate: Navigate<T>
 }
 
-export type CreateScreenStackOptions = {
-  stackOptions: StackNavigationOptions
-}
-export type CreateScreenStackResult<T extends BaseScreens> = {
-  stackOptions: StackNavigationOptions
-
+export type ScreenStack<T extends BaseScreens> = {
   ScreenContainer: React.ComponentType<ScreenContainerProps<T>>
   useNavigate(): Navigate<T>
   navigate: Navigate<T>

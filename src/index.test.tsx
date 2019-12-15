@@ -3,9 +3,7 @@ import { createScreenStack } from './createScreenStack'
 const AuthStack = createScreenStack<{
   Register: {}
   Login: { loginName: string }
-}>({
-  stackOptions: {},
-})
+}>()
 
 // interface MyScreens {
 //   _navigator: 'switch'
