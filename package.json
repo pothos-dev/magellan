@@ -16,7 +16,8 @@
   ],
   "scripts": {
     "prepare": "tsc",
-    "patch": "npm version patch && npm publish --access public"
+    "patch": "npm version patch && npm publish --access public",
+    "local": "npm pack && cd ../tripmemory && npm i ../magellan/bearbytes-magellan-3.0.1.tgz && rm ../magellan/bearbytes-magellan-3.0.1.tgz"
   },
   "author": "pancomputationalist@mailbox.org",
   "license": "ISC",
